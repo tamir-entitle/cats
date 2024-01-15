@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios"
 import constate from "constate"
 import debounce from "debounce-promise"
 import { useState } from "react"
-import { ICat } from "../types/common.types"
+import type { ICat } from "../types/common.types"
 import {createCat as createCatService, getCats as getCatsService}  from "../api/cats.service"
 
 const getCatsDebounced = debounce(getCatsService, 300)

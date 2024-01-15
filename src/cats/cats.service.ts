@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Op } from '@sequelize/core';
 import { MiceService } from 'src/mice/mice.service';
 import { Mouse } from 'src/mice/mouse.entity';
-import { ICat } from './cats.types';
+import type { ICat } from './cats.types';
 import { Cat } from './cat.entity';
 import { CAT_REPOSITORY } from './cats.constants';
 
