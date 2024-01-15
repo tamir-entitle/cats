@@ -1,0 +1,1 @@
+export const MICE_REPOSITORY = 'MICE_REPOSITORY';
