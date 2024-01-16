@@ -48,11 +48,7 @@ export class CatsService {
             },
           ],
         },
-        include: {
-          model: Mouse,
-          as: 'mice',
-          attributes: { exclude: ['catId'] },
-        },
+        include: this.includeMiceConfig,
       });
     }
     return this.catsRepository.findAll<Cat>({
