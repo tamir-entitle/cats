@@ -26,7 +26,7 @@ export class CatsService {
     await this.miceService.linkToCat(mouseId, createdCat.id);
     const createdCatWithMice: Cat = await this.catsRepository.findByPk<Cat>(
       createdCat.id,
-      { include: ['mice'] },
+      { include: this.includeMiceConfig },
     );
     return createdCatWithMice;
   }
@@ -37,10 +37,22 @@ export class CatsService {
           [Op.or]: [
             { firstName: { [Op.iLike]: `%${searchText}%` } },
             { lastName: { [Op.iLike]: `%${searchText}%` } },
-            { '$mice.name$': { [Op.iLike]: `%${searchText}%` } },
+            {
+              id: {
+                [Op.in]: this.catsRepository.sequelize.literal(`(
+                SELECT "cat_id"
+                FROM "mice"
+                WHERE "name" ILIKE '%${searchText}%'
+              )`),
+              },
+            },
           ],
         },
-        include: this.includeMiceConfig,
+        include: {
+          model: Mouse,
+          as: 'mice',
+          attributes: { exclude: ['catId'] },
+        },
       });
     }
     return this.catsRepository.findAll<Cat>({

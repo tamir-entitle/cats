@@ -8,5 +8,5 @@ export class CreateCatDto {
   lastName: string;
 
   @IsNotEmpty()
-  mouseId: number;
+  mouseId: string;
 }

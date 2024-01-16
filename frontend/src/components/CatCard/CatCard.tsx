@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import { Link } from "react-router-dom";
-import type { ICat } from '../../types/common.types';
 import useStyles from './CatCard.styles';
+import type { ICat } from '../../types/common.types';
 
-interface CatProps {
+interface CatCardProps {
     cat: ICat;
 }
 
-const Cat: React.FC<CatProps> = ({ cat }) => {
+const CatCard: React.FC<CatCardProps> = ({ cat }) => {
     const classes = useStyles();
     const mouseName: string = useMemo(() => cat?.mice?.[0]?.name?.toLowerCase(), [cat.mice]);
     const {firstName, lastName} = cat;
@@ -23,4 +23,4 @@ const Cat: React.FC<CatProps> = ({ cat }) => {
     );
 };
 
-export default Cat;
+export default CatCard;

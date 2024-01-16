@@ -5,8 +5,8 @@ export const initialFormState: Partial<ICat> = {
     firstName: 'Roger',
     lastName: 'jojo',
     description: 'Very funny cat',
-    image: '',
-    mouseId: -1
+    image: 'https://cataas.com/cat',
+    mouseId: ''
 };
 
 export const useForm = (initialState: Partial<ICat>) => {
@@ -18,16 +18,15 @@ export const useForm = (initialState: Partial<ICat>) => {
             lastName: '',
             description: '',
             image: '',
-            mouseId: -1
+            mouseId: ""
         })
     }, []);
 
     const onFormChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { id, value } = e.target;
-        const valueModified = id === "mouseId" ? Number(value) : e.target.value;
         setFormState({
             ...formState,
-            [id]: valueModified
+            [id]: value
         })
     }, [formState])
 
