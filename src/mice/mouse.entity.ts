@@ -1,12 +1,12 @@
 import {
   Table,
   Column,
-  Model,
   DataType,
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
 import { Cat } from '../cats/cat.entity';
+import { BaseModel } from 'src/core/database/database.models';
 
 @Table({
   tableName: 'mice',
@@ -16,16 +16,13 @@ import { Cat } from '../cats/cat.entity';
       name: 'name',
       fields: ['name'],
     },
+    {
+      name: 'catId',
+      fields: ['cat_id'],
+    },
   ],
 })
-export class Mouse extends Model {
-  @Column({
-    type: DataType.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  })
-  id: number;
-
+export class Mouse extends BaseModel {
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -37,20 +34,12 @@ export class Mouse extends Model {
   })
   image?: string;
 
-  @Column({
-    type: DataType.DATE,
-  })
-  createdAt: Date;
-
-  @Column({
-    type: DataType.DATE,
-  })
-  updatedAt: Date;
-
   @ForeignKey(() => Cat)
-  @Column
-  catId: number;
+  @Column({
+    type: DataType.UUID,
+  })
+  catId: string;
 
   @BelongsTo(() => Cat)
-  cat: Cat;
+  cat: ReturnType<() => Cat>;
 }

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import type { IMouse } from './mice.types';
 import { Mouse } from './mouse.entity';
 import { MICE_REPOSITORY } from './mice.constants';
@@ -12,17 +12,22 @@ export class MiceService {
   ) {}
 
   async create(mouse: Partial<IMouse>): Promise<Mouse> {
-    return this.miceRepository.create<Mouse>(mouse);
+    const mouseInstance = await this.miceRepository.create<Mouse>(mouse);
+    const mouseObject = mouseInstance.toJSON();
+    delete mouseObject.catId;
+    return mouseObject;
   }
 
-  async linkToCat(mouseId: number, catId: number): Promise<Mouse> {
-    const mouse = await this.miceRepository.findByPk<Mouse>(mouseId);
-    if (!mouse) {
-      throw new Error('Mouse not found');
+  async linkToCat(mouseId: string, catId: string): Promise<Mouse> {
+    try {
+      const mouse = await this.miceRepository.findByPk<Mouse>(mouseId);
+      mouse.catId = catId;
+      await mouse.save();
+      return mouse;
+    } catch (e) {
+      console.error(e);
+      throw new NotFoundException('Mouse not found');
     }
-    mouse.catId = catId;
-    await mouse.save();
-    return mouse;
   }
 
   async findAll(): Promise<Mouse[]> {

@@ -1,12 +1,12 @@
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { CatsProvider } from "./store/cats.store"
 import { AlertProvider } from './store/alert.store';
-import CreateCat from './pages/CreateCat';
+import CreateCat from './pages/CreateCatPage';
 import Navbar from './components/Navbar';
 import Alert from './components/Alert';
 import useStyles from './App.styles';
-import CatList from "./pages/CatList"
-import Cat from './pages/Cat';
+import CatList from "./pages/CatListPage"
+import Cat from './pages/CatPage';
 
 const HeaderLayout = () => {
   const classes = useStyles()

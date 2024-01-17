@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { AlertType, useAlertContext } from '../../store/alert.store';
 import useStyles from './Alert.styles';
 
-const Cat: React.FC = () => {
+const Alert: React.FC = () => {
     const { state } = useAlertContext();
     const classes = useStyles();
     const { message, type } = state.alert;
@@ -28,4 +28,4 @@ const Cat: React.FC = () => {
     );
 };
 
-export default Cat;
+export default Alert;
