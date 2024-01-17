@@ -41,5 +41,5 @@ export class Mouse extends BaseModel {
   catId: string;
 
   @BelongsTo(() => Cat)
-  cat: Cat;
+  cat: ReturnType<() => Cat>;
 }

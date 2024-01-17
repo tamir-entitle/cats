@@ -33,6 +33,7 @@ export class CatsService {
   async findAll(searchText: string): Promise<Cat[]> {
     if (searchText) {
       return this.catsRepository.findAll<Cat>({
+        replacements: { searchText: `%${searchText}%` },
         where: {
           [Op.or]: [
             { firstName: { [Op.iLike]: `%${searchText}%` } },
@@ -42,7 +43,7 @@ export class CatsService {
                 [Op.in]: this.catsRepository.sequelize.literal(`(
                 SELECT "cat_id"
                 FROM "mice"
-                WHERE "name" ILIKE '%${searchText}%'
+                WHERE "name" ILIKE :searchText
               )`),
               },
             },

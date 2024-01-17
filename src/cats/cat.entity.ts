@@ -39,13 +39,6 @@ export class Cat extends BaseModel {
   })
   description: string;
 
-  @HasMany(
-    () => {
-      // Have to find a better workaround for this
-      const { Mouse } = require('../mice/mouse.entity');
-      return Mouse;
-    },
-    { onDelete: 'CASCADE' },
-  )
-  mice: Mouse[];
+  @HasMany(() => Mouse, { onDelete: 'CASCADE' })
+  mice: ReturnType<() => Mouse[]>;
 }
