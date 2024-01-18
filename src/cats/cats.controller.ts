@@ -14,8 +14,8 @@ export class CatsController {
   }
 
   @Get()
-  async findAll(@Query('query') searchText: string) {
-    const cats: Cat[] = await this.catsService.findAll(searchText);
+  async findAll(@Query('query') query: string) {
+    const cats: Cat[] = await this.catsService.findAll(query);
     return cats;
   }
   @Post()

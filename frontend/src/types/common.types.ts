@@ -5,7 +5,7 @@ export interface ICat {
     image?: string;
     description: string;
     mice: IMouse[];
-    mouseId?: number;
+    mouseId?: string;
     createdAt?: string;
     updatedAt?: string;
 }

@@ -3,7 +3,7 @@ import { useCatsContext } from '../../store/cats.store';
 import CatCard from '../../components/CatCard';
 import useStyles from './CatListPage.styles';
 
-const CatsList: React.FC = () => {
+const CatListPage: React.FC = () => {
     const { state, actions } = useCatsContext();
     const [searchText, setSearchText] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,9 +31,8 @@ const CatsList: React.FC = () => {
     }, []);
 
     return (
-        <>
         <div className={classes.editorWrapper}>
-            <label className={classes.search}>
+            <div className={classes.search}>
                 <input
                     type="text"
                     className={classes.searchInput + ` ${isLoading ? classes.loading : ''}`}
@@ -41,13 +40,12 @@ const CatsList: React.FC = () => {
                     onChange={onSearchText} 
                     placeholder='Search by cat or mouse name'
                     />
-            </label>
+            </div>
             <div className={classes.catsListWrapper}>
                 {cats.map((cat) => <CatCard key={cat.id} cat={cat} />)}
             </div>
         </div>
-        </>
     );
 };
 
-export default CatsList;
+export default CatListPage;

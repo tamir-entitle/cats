@@ -1,55 +1,66 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Op } from '@sequelize/core';
+import { EntityManager, EntityRepository } from '@mikro-orm/core';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { MiceService } from 'src/mice/mice.service';
 import { Mouse } from 'src/mice/mouse.entity';
-import type { ICat } from './cats.types';
 import { Cat } from './cat.entity';
-import { CAT_REPOSITORY } from './cats.constants';
+import type { ICat } from './cats.types';
 
 @Injectable()
 export class CatsService {
-  private readonly includeMiceConfig = [
-    {
-      model: Mouse,
-      as: 'mice',
-      attributes: { exclude: ['catId'] },
-    },
-  ];
   constructor(
     @Inject(MiceService) private readonly miceService: MiceService,
-    @Inject(CAT_REPOSITORY) private catsRepository: typeof Cat,
+    @InjectRepository(Cat)
+    private readonly catsRepository: EntityRepository<Cat>,
+    private readonly em: EntityManager,
   ) {}
 
   async create(cat: Partial<ICat>): Promise<Cat> {
     const { mouseId } = cat;
-    const createdCat: Cat = await this.catsRepository.create<Cat>(cat);
-    await this.miceService.linkToCat(mouseId, createdCat.id);
-    const createdCatWithMice: Cat = await this.catsRepository.findByPk<Cat>(
-      createdCat.id,
-      { include: ['mice'] },
-    );
-    return createdCatWithMice;
+    let mouse: Mouse | null = null;
+    // If mouse not found throw error
+    try {
+      mouse = await this.miceService.findOne(mouseId);
+      if (!mouse) {
+        throw new Error();
+      }
+    } catch (e) {
+      throw new NotFoundException(
+        'Mouse not found' + (e.message ? ': ' + e.message : ''),
+      );
+    }
+    const newCat: Cat = this.catsRepository.create(cat);
+    newCat.mice.add(mouse);
+    await this.em.persistAndFlush(newCat);
+    delete mouse.cat;
+    return newCat;
   }
-  async findAll(searchText: string): Promise<Cat[]> {
-    if (searchText) {
-      return this.catsRepository.findAll<Cat>({
+
+  async findAll(query: string): Promise<Cat[]> {
+    if (query) {
+      const subQuery = this.em
+        .createQueryBuilder(Mouse)
+        .select('cat_id')
+        .where({ name: { $ilike: `%${query}%` } })
+        .getKnexQuery();
+      return this.catsRepository.findAll({
         where: {
-          [Op.or]: [
-            { firstName: { [Op.iLike]: `%${searchText}%` } },
-            { lastName: { [Op.iLike]: `%${searchText}%` } },
-            { '$mice.name$': { [Op.iLike]: `%${searchText}%` } },
+          $or: [
+            { firstName: { $ilike: `%${query}%` } },
+            { lastName: { $ilike: `%${query}%` } },
+            {
+              id: {
+                $in: subQuery,
+              },
+            },
           ],
         },
-        include: this.includeMiceConfig,
+        populate: ['mice'],
       });
     }
-    return this.catsRepository.findAll<Cat>({
-      include: this.includeMiceConfig,
-    });
+    return this.catsRepository.findAll({ populate: ['mice'] });
   }
-  async findOne(id: string): Promise<Cat> {
-    return this.catsRepository.findByPk<Cat>(id, {
-      include: this.includeMiceConfig,
-    });
+  async findOne(id): Promise<Cat> {
+    return this.catsRepository.findOne(id, { populate: ['mice'] });
   }
 }

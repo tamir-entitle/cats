@@ -5,7 +5,7 @@ import type { ICat } from '../../types/common.types';
 import {getCat} from '../../api/cats.service';
 import useStyles from './CatPage.styles';
 
-const CatsList: React.FC = () => {
+const CatPage: React.FC = () => {
     const classes = useStyles();
     const { id } = useParams<string>();
     const [cat, setCat] = useState<ICat | null>(null);
@@ -17,7 +17,7 @@ const CatsList: React.FC = () => {
         })
     }, [])
 
-    const mouseName = useMemo(() => cat?.mice?.[0]?.name?.toLowerCase(), [cat?.mice]);
+    const mouseName = useMemo(() => cat?.mice?.[0]?.name, [cat?.mice]);
 
     if (!cat) { return <div></div> }
     return (
@@ -33,4 +33,4 @@ const CatsList: React.FC = () => {
     );
 };
 
-export default CatsList;
+export default CatPage;

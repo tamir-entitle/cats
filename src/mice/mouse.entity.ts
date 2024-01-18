@@ -1,56 +1,33 @@
 import {
-  Table,
-  Column,
-  Model,
-  DataType,
-  ForeignKey,
-  BelongsTo,
-} from 'sequelize-typescript';
-import { Cat } from '../cats/cat.entity';
+  Entity,
+  PrimaryKey,
+  Property,
+  ManyToOne,
+  Index,
+} from '@mikro-orm/core';
+import { v4 } from 'uuid';
+import { Cat } from 'src/cats/cat.entity';
 
-@Table({
+@Entity({
   tableName: 'mice',
-  underscored: true,
-  indexes: [
-    {
-      name: 'name',
-      fields: ['name'],
-    },
-  ],
 })
-export class Mouse extends Model {
-  @Column({
-    type: DataType.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  })
-  id: number;
+@Index({ properties: ['cat'] })
+export class Mouse {
+  @PrimaryKey()
+  id = v4();
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  name: string;
+  @Property({ type: 'text' })
+  name!: string;
 
-  @Column({
-    type: DataType.STRING,
-  })
+  @Property({ type: 'text' })
   image?: string;
 
-  @Column({
-    type: DataType.DATE,
-  })
-  createdAt: Date;
+  @Property()
+  createdAt = new Date();
 
-  @Column({
-    type: DataType.DATE,
-  })
-  updatedAt: Date;
+  @Property({ onUpdate: () => new Date() })
+  updatedAt = new Date();
 
-  @ForeignKey(() => Cat)
-  @Column
-  catId: number;
-
-  @BelongsTo(() => Cat)
-  cat: Cat;
+  @ManyToOne(() => Cat, { nullable: true })
+  cat?: ReturnType<() => Cat>;
 }

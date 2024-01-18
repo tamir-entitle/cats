@@ -10,7 +10,7 @@ export enum AlertType {
 
 interface IAlertType {
     message: string;
-    type?: keyof typeof AlertType;
+    type?: keyof AlertType;
 } 
 
 const emptyAlert: IAlertType = {message: ""}

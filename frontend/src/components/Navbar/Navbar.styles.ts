@@ -18,8 +18,8 @@ export default createUseStyles({
     },
     seperator: {
         width: '1px',
-        height: '25px',
-        backgroundColor: 'white',
+        height: '18px',
+        backgroundColor: '#ffffff75',
         borderRadius: '5px',
     },
     navbarButton: {

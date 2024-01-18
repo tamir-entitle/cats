@@ -1,13 +1,14 @@
-import { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
+import { BASE_API_URL } from '../../constants';
 import { useCatsContext } from '../../store/cats.store';
 import type { IMouse } from '../../types/common.types';
-import { getMice } from '../../api/mice.service';
 import { useAlertContext, AlertType } from '../../store/alert.store';
 import { initialFormState, useForm } from './createCatsPage.hooks';
 import useStyles from './CreateCatPage.styles';
 
-const Create: React.FC = () => {
+
+const CreateCatPage: React.FC = () => {
     const classes = useStyles();
     const { actions: { createCat } } = useCatsContext();
     const { actions: { setNewAlert } } = useAlertContext();
@@ -17,7 +18,7 @@ const Create: React.FC = () => {
 
     // On mount fetch available mice list
     useEffect(() => {
-        getMice().then((miceRes: AxiosResponse<IMouse[]>) => {
+        axios(`${BASE_API_URL}/mice`).then((miceRes: AxiosResponse<IMouse[]>) => {
             setMice(miceRes.data)
         })
     }, [])
@@ -38,7 +39,7 @@ const Create: React.FC = () => {
             await createCat(formState)
             setNewAlert({ message: 'Your cat has been created!', type: AlertType.SUCCESS })
             setIsLoading(false)
-            const newMice = mice.filter((mouse) => Number(mouse.id) !== formState.mouseId)
+            const newMice = mice.filter((mouse) => mouse.id !== formState.mouseId)
             resetForm()
             setMice(newMice)
         } catch (e) {
@@ -96,7 +97,7 @@ const Create: React.FC = () => {
                     value={formState.mouseId}
                     required
                 >
-                    <option value={-1} disabled> -- select an option -- </option>
+                    <option value={""} disabled> -- select an option -- </option>
                     {mice.map((mouse) => <option value={mouse.id} key={`mouse_${mouse.id}`}>{mouse.name}</option>)}
                 </select>
             </div>
@@ -108,4 +109,4 @@ const Create: React.FC = () => {
     );
 };
 
-export default Create;
+export default CreateCatPage;

@@ -1,64 +1,44 @@
-import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
-import { Mouse } from '../mice/mouse.entity';
+import {
+  Collection,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { v4 } from 'uuid';
+import { Mouse } from 'src/mice/mouse.entity';
 
-@Table({
+@Entity({
   tableName: 'cats',
-  underscored: true,
-  indexes: [
-    {
-      name: 'firstName',
-      fields: ['first_name'],
-    },
-    {
-      name: 'lastName',
-      fields: ['last_name'],
-    },
-  ],
 })
-export class Cat extends Model {
-  @Column({
-    type: DataType.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  })
-  id: number;
+@Index({ properties: ['firstName'] })
+@Index({ properties: ['lastName'] })
+export class Cat {
+  @PrimaryKey()
+  id = v4();
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  firstName: string;
+  @Property()
+  firstName!: string;
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  lastName: string;
+  @Property()
+  lastName!: string;
 
-  @Column({
-    type: DataType.STRING,
-  })
+  @Property()
   image?: string;
 
-  @Column({
-    type: DataType.STRING,
-  })
-  description: string;
+  @Property()
+  description?: string;
 
-  @Column({
-    type: DataType.DATE,
-  })
-  createdAt: Date;
+  @Property()
+  createdAt = new Date();
 
-  @Column({
-    type: DataType.DATE,
-  })
-  updatedAt: Date;
+  @Property({ onUpdate: () => new Date() })
+  updatedAt = new Date();
 
-  @HasMany(() => {
-    // Workaround to avoid circular dependency with Mouse.entity
-    const { Mouse } = require('../mice/mouse.entity');
-    return Mouse;
+  @OneToMany({
+    entity: () => Mouse,
+    mappedBy: 'cat',
   })
-  mice: Mouse[];
+  mice = new Collection<Mouse>(this);
 }
