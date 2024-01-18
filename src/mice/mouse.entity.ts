@@ -1,45 +1,33 @@
 import {
-  Table,
-  Column,
-  DataType,
-  ForeignKey,
-  BelongsTo,
-} from 'sequelize-typescript';
-import { Cat } from '../cats/cat.entity';
-import { BaseModel } from 'src/core/database/database.models';
+  Entity,
+  PrimaryKey,
+  Property,
+  ManyToOne,
+  Index,
+} from '@mikro-orm/core';
+import { v4 } from 'uuid';
+import { Cat } from 'src/cats/cat.entity';
 
-@Table({
+@Entity({
   tableName: 'mice',
-  underscored: true,
-  indexes: [
-    {
-      name: 'name',
-      fields: ['name'],
-    },
-    {
-      name: 'catId',
-      fields: ['cat_id'],
-    },
-  ],
 })
-export class Mouse extends BaseModel {
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  name: string;
+@Index({ properties: ['cat'] })
+export class Mouse {
+  @PrimaryKey()
+  id = v4();
 
-  @Column({
-    type: DataType.STRING,
-  })
+  @Property({ type: 'text' })
+  name!: string;
+
+  @Property({ type: 'text' })
   image?: string;
 
-  @ForeignKey(() => Cat)
-  @Column({
-    type: DataType.UUID,
-  })
-  catId: string;
+  @Property({ type: 'date' })
+  createdAt = new Date();
 
-  @BelongsTo(() => Cat)
-  cat: ReturnType<() => Cat>;
+  @Property({ onUpdate: () => new Date(), type: 'date' })
+  updatedAt = new Date();
+
+  @ManyToOne(() => Cat, { nullable: true })
+  cat?: ReturnType<() => Cat>;
 }

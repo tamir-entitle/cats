@@ -1,44 +1,44 @@
-import { Table, Column, DataType, HasMany } from 'sequelize-typescript';
-import { BaseModel } from 'src/core/database/database.models';
-import { Mouse } from '../mice/mouse.entity';
+import {
+  Collection,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { v4 } from 'uuid';
+import { Mouse } from 'src/mice/mouse.entity';
 
-@Table({
+@Entity({
   tableName: 'cats',
-  underscored: true,
-  indexes: [
-    {
-      name: 'firstName',
-      fields: ['first_name'],
-    },
-    {
-      name: 'lastName',
-      fields: ['last_name'],
-    },
-  ],
 })
-export class Cat extends BaseModel {
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  firstName: string;
+@Index({ properties: ['firstName'] })
+@Index({ properties: ['lastName'] })
+export class Cat {
+  @PrimaryKey()
+  id = v4();
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  lastName: string;
+  @Property()
+  firstName!: string;
 
-  @Column({
-    type: DataType.STRING,
-  })
+  @Property()
+  lastName!: string;
+
+  @Property()
   image?: string;
 
-  @Column({
-    type: DataType.STRING,
-  })
-  description: string;
+  @Property()
+  description?: string;
 
-  @HasMany(() => Mouse, { onDelete: 'CASCADE' })
-  mice: ReturnType<() => Mouse[]>;
+  @Property()
+  createdAt = new Date();
+
+  @Property({ onUpdate: () => new Date() })
+  updatedAt = new Date();
+
+  @OneToMany({
+    entity: () => Mouse,
+    mappedBy: 'cat',
+  })
+  mice = new Collection<Mouse>(this);
 }

@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize-typescript';
-import { Cat } from 'src/cats/cat.entity';
-import { Mouse } from 'src/mice/mouse.entity';
+// import { Cat } from 'src/cats/cat.entityOld';
+// import { Mouse } from 'src/mice/mouse.entityOld';
 
 export const databaseProviders = [
   {
@@ -14,7 +14,7 @@ export const databaseProviders = [
         password: 'postgres',
         database: 'nest-js',
       });
-      sequelize.addModels([Cat, Mouse]);
+      // sequelize.addModels([Cat, Mouse]);
       await sequelize.sync();
       return sequelize;
     },
