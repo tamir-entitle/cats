@@ -22,10 +22,10 @@ export class Mouse {
   @Property({ type: 'text' })
   image?: string;
 
-  @Property({ type: 'date' })
+  @Property()
   createdAt = new Date();
 
-  @Property({ onUpdate: () => new Date(), type: 'date' })
+  @Property({ onUpdate: () => new Date() })
   updatedAt = new Date();
 
   @ManyToOne(() => Cat, { nullable: true })

@@ -2,6 +2,7 @@ import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable } from '@nestjs/common';
 import { Mouse } from './mouse.entity';
+import type { IMouse } from './mice.types';
 
 @Injectable()
 export class MiceService {
@@ -11,7 +12,7 @@ export class MiceService {
     private readonly em: EntityManager,
   ) {}
 
-  async create(mouse: Partial<Mouse>): Promise<Mouse> {
+  async create(mouse: Partial<IMouse>): Promise<Mouse> {
     const newMouse: Mouse = this.miceRepository.create(mouse);
     await this.em.persistAndFlush(newMouse);
     return newMouse;
@@ -21,7 +22,7 @@ export class MiceService {
     return this.miceRepository.findAll({ where: { cat: { $eq: null } } });
   }
 
-  async findOne(id): Promise<Mouse> {
+  async findOne(id: string): Promise<Mouse> {
     return this.miceRepository.findOne(id);
   }
 }

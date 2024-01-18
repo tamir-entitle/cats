@@ -6,8 +6,6 @@ import { Mouse } from 'src/mice/mouse.entity';
 import { Cat } from './cat.entity';
 import type { ICat } from './cats.types';
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 @Injectable()
 export class CatsService {
   constructor(
@@ -20,6 +18,7 @@ export class CatsService {
   async create(cat: Partial<ICat>): Promise<Cat> {
     const { mouseId } = cat;
     let mouse: Mouse | null = null;
+    // If mouse not found throw error
     try {
       mouse = await this.miceService.findOne(mouseId);
       if (!mouse) {
@@ -37,18 +36,18 @@ export class CatsService {
     return newCat;
   }
 
-  async findAll(searchText): Promise<Cat[]> {
-    if (searchText) {
+  async findAll(query: string): Promise<Cat[]> {
+    if (query) {
       const subQuery = this.em
         .createQueryBuilder(Mouse)
         .select('cat_id')
-        .where({ name: { $ilike: `%${searchText}%` } })
+        .where({ name: { $ilike: `%${query}%` } })
         .getKnexQuery();
       return this.catsRepository.findAll({
         where: {
           $or: [
-            { firstName: { $ilike: `%${searchText}%` } },
-            { lastName: { $ilike: `%${searchText}%` } },
+            { firstName: { $ilike: `%${query}%` } },
+            { lastName: { $ilike: `%${query}%` } },
             {
               id: {
                 $in: subQuery,
