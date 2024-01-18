@@ -298,7 +298,6 @@ FakesAssemblies/
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
 node_modules/
-frontend/node_modules/
 
 # Typescript v1 declaration files
 typings/
@@ -399,3 +398,8 @@ Temporary Items
 dist
 .webpack
 .serverless/**/*.zip
+
+
+# Other
+frontend/node_modules/
+src/migrations/

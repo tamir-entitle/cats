@@ -8,7 +8,7 @@ const catsApi = axios.create({
 
 export const getCat = (id: string) => catsApi(`/${id}`);
 
-export const getCats = (searchText?: string) => catsApi('', { params: { query: searchText } });
+export const getCats = (signal: AbortSignal, searchText?: string) => catsApi('', { signal, params: { query: searchText } });
 
 export const createCat = (data: Partial<ICat>) => catsApi.post('', data)
 
